@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <title>Document</title>
+</head>
+<script>
+    AFRAME.registerComponent('handle-events', {
+      init: function () {
+        var el = this.el;  // <a-box>
+        el.addEventListener('mouseenter', function () {// accion que se ejecuta una vez el punto de mira se pone en el objeto
+          el.setAttribute('color', '#24CAFF');  //lo convierte a color azul
+        });
+        el.addEventListener('mouseleave', function () {//funcion que se ejecuta cuando el cursor deja de tocar el objeto, en este caso es para volver al color original
+          el.setAttribute('color', '#EF2D5E');  //convierte a color rosa
+        });
+        el.addEventListener('click', function () {//funcion click en VR se ejecuta cuando te quedas 1 segundo con el cursor apuntando a un objeto
+          el.setAttribute('scale', {x: document.getElementById("bb").getAttribute("scale").x*2, y: 1, z: 2});//duplica el tamaño en x cada vez que hace click
+        });
+      } 
+    });
+
+    AFRAME.registerComponent('transportando',{//funcion que teletransporta a un cubo determinado
+        init:function(){
+            var el2= this.el;
+            var camara= document.getElementsByTagName("a-camera")[0]// selecciono la camara
+
+            el2.addEventListener('click', function(){// esta funcion va a ubicar la camara en uno de los dos cubos amarillos que hay en el escenario
+                camara.setAttribute("position", {//para modificar el atributo position de camera
+                    x: el2.getAttribute("position").x,// extraigo la position x del cubo que estoy haciendo click y uso esa coordenada para teletransportarme
+                    y: el2.getAttribute("position").y,// extraigo la position y del cubo que estoy haciendo click y uso esa coordenada para teletransportarme
+                    z: el2.getAttribute("position").z,// extraigo la position z del cubo que estoy haciendo click y uso esa coordenada para teletransportarme
+
+                })
+            })
+        }
+    })
+  </script>
+<body style='margin : 0px; overflow: hidden;'>
+    <a-scene>
+        <a-box  id="bb"color="#EF2D5E" position="0 1 -4" handle-events></a-box> <!--Aquí estoy creando el cubo 1 y este va a reaccionar a la funcion handle-events-->
+        <a-box id="position1" color="yellow" position="2, 1,1" transportando></a-box><!--Creo el cubo le doy una posicion y va a reaccionar a la funcion transportando-->
+        <a-box id="position1" color="yellow" position="-2, 1,1" transportando></a-box><!--Creo el cubo le doy una posicion y va a reaccionar a la funcion transportando-->
+      
+      <a-camera><a-cursor></a-cursor></a-camera><!--Le paso a la camara el cursor-->
+      <a-sky color="#333"></a-sky><!--Creando un cielo-->
+      <a-plane color="#000" rotation="-90 0 0" width="500" height="500"></a-plane><!--Creando el plano-->
+
+    </a-scene>
+    
+</body>
+</html>
